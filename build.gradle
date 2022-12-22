@@ -98,7 +98,7 @@ Task download = tasks.create(name: "downloadServerCore", group: "Mechanical Kine
 //    into 'build/run/plugins'
 //}
 
-Task run = tasks.create(name:"runServer",type: Exec, group: "Mechanical Kinetic Energy") {
+Task run = tasks.create(name:"runServer",dependsOn: [build, download, copy],type: Exec, group: "Mechanical Kinetic Energy") {
     workingDir "$projectDir/build/run"
     File name = new File(getWorkingDir(), "eula.txt")
     if (!name.exists()) {
@@ -120,13 +120,15 @@ Task run = tasks.create(name:"runServer",type: Exec, group: "Mechanical Kinetic 
         commandLine 'sh', '-c', "${SHELL_NAME}.sh"
     }
 }
-run.dependsOn(build)
-run.dependsOn(download)
-run.dependsOn(copy)
 
 Task build = tasks.build
 build.dependsOn(download)
 build.dependsOn(copy)
+//run.dependsOn(build)
+//run.dependsOn(download)
+//run.dependsOn(copy)
+
+
 
 static String getMonth(int i) {
     switch (i) {
