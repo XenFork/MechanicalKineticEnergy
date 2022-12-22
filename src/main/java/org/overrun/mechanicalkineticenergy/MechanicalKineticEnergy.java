@@ -6,6 +6,8 @@ import org.bukkit.Server;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.overrun.mechanicalkineticenergy.recipe.Utils;
+import org.overrun.mechanicalkineticenergy.recipe.Utils.Ing;
 
 import java.util.logging.Logger;
 
@@ -18,14 +20,15 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
         log.info("load plugin...");
         ItemStack stack = new ItemStack(Material.IRON_INGOT);
         NamespacedKey ashjKey = new NamespacedKey(this, "andesite_alloy");
-        ShapedRecipe ashj = new ShapedRecipe(ashjKey,stack);
-        ashj.shape(
-                "xy",
-                "yx"
-        )
-                .setIngredient('x', Material.ANDESITE)
-                .setIngredient('y', Material.IRON_NUGGET);
-        server.addRecipe(ashj);
+        var andesite_alloy = Utils.shapedRecipe(
+                ashjKey, stack,
+                new Ing[]{
+                        new Ing('x', Material.ANDESITE),
+                        new Ing('y', Material.IRON_NUGGET)
+                },
+                "xy", "yx"
+        );
+        server.addRecipe(andesite_alloy);
     }
 
     @Override
