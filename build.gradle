@@ -1,11 +1,10 @@
-import java.nio.channels.Channels
-import java.nio.channels.ReadableByteChannel
-import java.nio.file.Files
 import java.time.LocalDateTime
 
 plugins {
     id 'java'
 }
+
+apply from: './MKEGradle/down.gradle'
 
 group = 'org.overrun'
 version = '1.0-SNAPSHOT'
@@ -15,6 +14,7 @@ ext {
     SPIGOT_VERSION = 'R0.1-SNAPSHOT'
     JAVA_PATH = 'java'
     SHELL_NAME = 'mkeRunTestSever'
+    HMCL_VERSION= '3.5.3.228'
 }
 
 repositories {
@@ -38,7 +38,7 @@ dependencies {
 def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
+    sourceCompatibility =
     targetCompatibility = javaVersion
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
@@ -60,45 +60,11 @@ processResources {
     }
 }
 
-static void downloadUsingStream(File file, String urlString) {
-    URL url = new URL(urlString)
-    BufferedInputStream bis = new BufferedInputStream(url.openStream())
-    FileOutputStream fis = new FileOutputStream(file)
-    byte[] buffer = new byte[1024]
-    int count = 0;
-    while ((count = bis.read(buffer, 0, 1024)) != -1) {
-        fis.write(buffer, 0, count)
-    }
-    fis.close()
-    bis.close()
-}
-
-Task copy = tasks.create(name: "copy",type: Copy, group: "Mechanical Kinetic Energy") {
+tasks.create(name:"copyLibs",type: Copy, group: "Mechanical Kinetic Energy") {
     from 'build/libs'
     into 'build/run/plugins'
 }
-
-Task download = tasks.create(name: "downloadServerCore", group: "Mechanical Kinetic Energy") {
-    final File name = file("build/run")
-    if (!name.exists()) name.mkdirs()
-    final def urlPreName = "https://download.getbukkit.org/spigot/"//spigot-1.19.3.jar
-    final def jarName = "spigot-${MC_VERSION}.jar"
-    final File path = new File(name, jarName)
-    final File bat = new File(name, "${SHELL_NAME}.bat")
-    final File sh = new File(name, "${SHELL_NAME}.sh")
-    final def java_path = "${JAVA_PATH}".toString();
-    if (!path.exists()) {
-        downloadUsingNIO(path, urlPreName + jarName)
-    }
-    createRunBat(bat, jarName, java_path)
-    createRunSh(sh, jarName, java_path)
-}
-//task copy(type: Copy ,group: "Mechanical Kinetic Energy") {
-//    from 'build/libs'
-//    into 'build/run/plugins'
-//}
-
-Task run = tasks.create(name:"runServer",dependsOn: [build, download, copy],type: Exec, group: "Mechanical Kinetic Energy") {
+tasks.create(name:"runServer",dependsOn: [build, downloadServerCore, copyLibs],type: Exec, group: "Mechanical Kinetic Energy") {
     workingDir "$projectDir/build/run"
     File name = new File(getWorkingDir(), "eula.txt")
     if (!name.exists()) {
@@ -121,14 +87,18 @@ Task run = tasks.create(name:"runServer",dependsOn: [build, download, copy],type
     }
 }
 
+tasks.create(name:"runClient",dependsOn: [downloadClient],type: Exec, group: "Mechanical Kinetic Energy") {
+    workingDir "$projectDir/build/client"
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
+        commandLine 'cmd', '/c', "${SHELL_NAME}.bat"
+    } else {
+        commandLine 'sh', '-c', "${SHELL_NAME}.sh"
+    }
+}
+
 Task build = tasks.build
-build.dependsOn(download)
-build.dependsOn(copy)
-//run.dependsOn(build)
-//run.dependsOn(download)
-//run.dependsOn(copy)
-
-
+build.dependsOn(downloadServerCore)
+build.dependsOn(copyLibs)
 
 static String getMonth(int i) {
     switch (i) {
@@ -157,34 +127,6 @@ static String getMonth(int i) {
         case 12:
             return "Dec."
     }
-}
-
-static void downloadUsingNIO(File file, String urlString) {
-    URL url = new URL(urlString)
-    ReadableByteChannel rbc = Channels.newChannel(url.openStream())
-    FileOutputStream fos = new FileOutputStream(file)
-    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE)
-    fos.close()
-    rbc.close()
-}
-
-static void createRunBat(File file, String jarName, String javaPath) {
-    if (!file.exists()) file.createNewFile()
-    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
-    bw.write("@echo off")
-    bw.newLine()
-    bw.write( javaPath + " -Xms1g -Xmx1g -jar " + jarName)
-    bw.close()
-}
-
-static void createRunSh(File file, String jarName, String javaPath) {
-    if (!file.exists()) file.createNewFile();
-    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
-    bw.write("#!/bin/bash")
-    bw.newLine()
-    bw.write(javaPath + " -Xms1g -Xmx1g -jar " + jarName)
-    bw.newLine()
-    bw.close()
 }
 
 

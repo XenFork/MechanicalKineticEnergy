@@ -1,0 +1,97 @@
+import java.nio.channels.Channels
+import java.nio.channels.ReadableByteChannel
+
+tasks.register("downloadServerCore") {
+    setGroup("Mechanical Kinetic Energy")
+    final File name = file("build/run")
+    if (!name.exists()) name.mkdirs()
+    final def urlPreName = "https://download.getbukkit.org/spigot/"//spigot-1.19.3.jar
+    final def jarName = "spigot-${MC_VERSION}.jar"
+    final File path = new File(name, jarName)
+    final File bat = new File(name, "${SHELL_NAME}.bat")
+    final File sh = new File(name, "${SHELL_NAME}.sh")
+    final def java_path = "${JAVA_PATH}".toString()
+    if (!path.exists()) {
+        downloadUsingNIO(path, urlPreName + jarName)
+    }
+    createRunBat(bat, jarName, java_path)
+    createRunSh(sh, jarName, java_path)
+}
+
+tasks.register("downloadClient") {
+    setGroup("Mechanical Kinetic Energy")
+    final File name = file("build/client")
+    if (!name.exists()) name.mkdirs()
+    final def urlPreName = "https://github.com/huanghongxun/HMCL/releases/download/"//v3.5.3.228/HMCL-3.5.3.228.jar
+    final def jarName = "HMCL-${HMCL_VERSION}.jar"//v3.5.3.228/HMCL-3.5.3.228.jar
+    final File path = new File(name, jarName)
+    final File bat = new File(name, "${SHELL_NAME}.bat")
+    final File sh = new File(name, "${SHELL_NAME}.sh")
+    final def java_path = "${JAVA_PATH}".toString()
+    if (!path.exists()) {
+        downloadUsingNIO(path, urlPreName + "v"+ HMCL_VERSION.toString() +"/" + jarName)
+    }
+    createClientRunBat(bat, jarName, java_path)
+    createClientRunSh(sh, jarName, java_path)
+}
+
+@SuppressWarnings('unused')
+static void downloadUsingStream(File file, String urlString) {
+    URL url = new URL(urlString)
+    BufferedInputStream bis = new BufferedInputStream(url.openStream())
+    FileOutputStream fis = new FileOutputStream(file)
+    byte[] buffer = new byte[1024]
+    int count = 0;
+    while ((count = bis.read(buffer, 0, 1024)) != -1) {
+        fis.write(buffer, 0, count)
+    }
+    fis.close()
+    bis.close()
+}
+
+static void downloadUsingNIO(File file, String urlString) {
+    URL url = new URL(urlString)
+    ReadableByteChannel rbc = Channels.newChannel(url.openStream())
+    FileOutputStream fos = new FileOutputStream(file)
+    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE)
+    fos.close()
+    rbc.close()
+}
+
+static void createRunBat(File file, String jarName, String javaPath) {
+    if (!file.exists()) file.createNewFile()
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+    bw.write("@echo off")
+    bw.newLine()
+    bw.write( javaPath + " -Xms1g -Xmx1g -jar " + jarName)
+    bw.close()
+}
+
+static void createClientRunBat(File file, String jarName, String javaPath) {
+    if (!file.exists()) file.createNewFile()
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+    bw.write("@echo off")
+    bw.newLine()
+    bw.write( javaPath + " -jar " + jarName)
+    bw.close()
+}
+
+static void createRunSh(File file, String jarName, String javaPath) {
+    if (!file.exists()) file.createNewFile();
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+    bw.write("#!/bin/bash")
+    bw.newLine()
+    bw.write(javaPath + " -Xms1g -Xmx1g -jar " + jarName)
+    bw.newLine()
+    bw.close()
+}
+
+static void createClientRunSh(File file, String jarName, String javaPath) {
+    if (!file.exists()) file.createNewFile();
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+    bw.write("#!/bin/bash")
+    bw.newLine()
+    bw.write(javaPath + " -jar " + jarName)
+    bw.newLine()
+    bw.close()
+}
