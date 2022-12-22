@@ -32,10 +32,9 @@ repositories {
 dependencies {
     //noinspection VulnerableLibrariesLocal
     compileOnly "org.spigotmc:spigot-api:${MC_VERSION}-${SPIGOT_VERSION}"
-    //https://download.getbukkit.org/spigot/spigot-1.19.3.jar
 }
 
-def targetJavaVersion = 17
+final def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility =
