@@ -1,6 +1,24 @@
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
 
+tasks.register("downloadBuildTools") {
+    setGroup("Mechanical Kinetic Energy")
+    final File name = file("build/buildT")
+    if (!name.exists()) name.mkdirs()
+    final def urlPreName = "https://hub.spigotmc.org/jenkins/job/BuildTools/lastSuccessfulBuild/artifact/target/BuildTools.jar"
+    final def jarName = "BuildTools.jar"
+    final File path = new File(name, jarName)
+    final File bat = new File(name, "${SHELL_NAME}.bat")
+    final File sh = new File(name, "${SHELL_NAME}.sh")
+
+    final def java_path = "${JAVA_PATH}".toString()
+    if (!path.exists()) {
+        downloadUsingNIO(path, urlPreName)
+    }
+    createBuildToolsBat(bat,jarName,java_path)
+    createBuildToolsSh(sh, jarName, java_path)
+}
+
 tasks.register("downloadServerCore") {
     setGroup("Mechanical Kinetic Energy")
     final File name = file("build/run")
@@ -67,12 +85,24 @@ static void createRunBat(File file, String jarName, String javaPath) {
     bw.close()
 }
 
+static void createBuildToolsBat(File file,String jarName,String javaPath) {
+    if (!file.exists()) file.createNewFile()
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+    bw.write("@echo off")
+    bw.newLine()
+    bw.write(javaPath + " -jar " + jarName)
+    bw.newLine()
+    bw.close()
+}
+
+
 static void createClientRunBat(File file, String jarName, String javaPath) {
     if (!file.exists()) file.createNewFile()
     BufferedWriter bw = new BufferedWriter(new FileWriter(file))
     bw.write("@echo off")
     bw.newLine()
     bw.write( javaPath + " -jar " + jarName)
+    bw.newLine()
     bw.close()
 }
 
@@ -85,6 +115,17 @@ static void createRunSh(File file, String jarName, String javaPath) {
     bw.newLine()
     bw.close()
 }
+
+ static void createBuildToolsSh(File file,String jarName,String javaPath) {
+     if (!file.exists()) file.createNewFile()
+     BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+     bw.write("#!/bin/bash")
+     bw.newLine()
+     bw.write(javaPath + " -jar " + jarName + " -rev ")
+     bw.newLine()
+     bw.close()
+
+ }
 
 static void createClientRunSh(File file, String jarName, String javaPath) {
     if (!file.exists()) file.createNewFile();

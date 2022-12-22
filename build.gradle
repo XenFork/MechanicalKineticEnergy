@@ -18,6 +18,7 @@ ext {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     maven {
         name = 'spigotmc-repo'
@@ -32,6 +33,7 @@ repositories {
 dependencies {
     //noinspection VulnerableLibrariesLocal
     compileOnly "org.spigotmc:spigot-api:${MC_VERSION}-${SPIGOT_VERSION}"
+    compileOnly "org.spigotmc:spigot:${MC_VERSION}-${SPIGOT_VERSION}"
 }
 
 final def targetJavaVersion = 17
@@ -63,6 +65,16 @@ tasks.create(name:"copyLibs",type: Copy, group: "Mechanical Kinetic Energy") {
     from 'build/libs'
     into 'build/run/plugins'
 }
+
+tasks.create(name:"buildTools", dependsOn: [downloadBuildTools],type:Exec, group: "Mechanical Kinetic Energy") {
+    workingDir "$projectDir/build/buildT"
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
+        commandLine 'cmd', '/c', "${SHELL_NAME}.bat"
+    } else {
+        commandLine 'sh', '-c', "${SHELL_NAME}.sh"
+    }
+}
+
 tasks.create(name:"runServer",dependsOn: [build, downloadServerCore, copyLibs],type: Exec, group: "Mechanical Kinetic Energy") {
     workingDir "$projectDir/build/run"
     File name = new File(getWorkingDir(), "eula.txt")
