@@ -1,9 +1,20 @@
+import java.nio.channels.Channel
+import java.nio.channels.Channels
+import java.nio.channels.ReadableByteChannel
+import java.util.stream.Stream
+
 plugins {
     id 'java'
 }
 
 group = 'org.overrun'
 version = '1.0-SNAPSHOT'
+
+ext {
+    MC_VERSION = '1.19.3'
+    SPIGOT_VERSION = 'R0.1-SNAPSHOT'
+    JAVA_PATH = 'java'
+}
 
 repositories {
     mavenCentral()
@@ -18,7 +29,9 @@ repositories {
 }
 
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.19.2-R0.1-SNAPSHOT'
+    //noinspection VulnerableLibrariesLocal
+    compileOnly "org.spigotmc:spigot-api:${MC_VERSION}-${SPIGOT_VERSION}"
+    //https://download.getbukkit.org/spigot/spigot-1.19.3.jar
 }
 
 def targetJavaVersion = 17
@@ -45,3 +58,51 @@ processResources {
         expand props
     }
 }
+
+task downloadServerCore {
+    final File name = file("build/run")
+    if (!name.exists()) name.mkdirs()
+    final def urlPreName = "https://download.getbukkit.org/spigot/"//spigot-1.19.3.jar
+    final def jarName = "spigot-${MC_VERSION}.jar"
+    final File path = new File(name, jarName)
+    final File bat = new File(name, "mkeRunTestSever.bat")
+    final def java_path = "${JAVA_PATH}".toString();
+    if (!path.exists()) {
+        downloadUsingNIO(path, urlPreName + jarName)
+    }
+    createRunBat(bat, jarName, java_path)
+
+}
+
+static void downloadUsingStream(File file, String urlString) {
+    URL url = new URL(urlString)
+    BufferedInputStream bis = new BufferedInputStream(url.openStream())
+    FileOutputStream fis = new FileOutputStream(file)
+    byte[] buffer = new byte[1024]
+    int count = 0;
+    while ((count = bis.read(buffer, 0, 1024)) != -1) {
+        fis.write(buffer, 0, count)
+    }
+    fis.close()
+    bis.close()
+}
+
+static void downloadUsingNIO(File file, String urlString) {
+    URL url = new URL(urlString)
+    ReadableByteChannel rbc = Channels.newChannel(url.openStream())
+    FileOutputStream fos = new FileOutputStream(file)
+    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE)
+    fos.close()
+    rbc.close()
+}
+
+static void createRunBat(File file, String jarName, String javaPath) {
+    if (!file.exists()) file.createNewFile()
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+    bw.write("@echo off")
+    bw.newLine()
+    bw.write( javaPath + " -Xms1g -Xmx1g -jar " + jarName)
+    bw.close()
+}
+
+
