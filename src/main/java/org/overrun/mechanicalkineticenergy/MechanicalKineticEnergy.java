@@ -1,7 +1,5 @@
 package org.overrun.mechanicalkineticenergy;
 
-import org.bukkit.event.Event;
-import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class MechanicalKineticEnergy extends JavaPlugin {
