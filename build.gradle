@@ -1,5 +1,6 @@
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
+import java.nio.file.Files
 import java.time.LocalDateTime
 
 plugins {
@@ -59,7 +60,25 @@ processResources {
     }
 }
 
-task downloadServerCore(group: "Mechanical Kinetic Energy") {
+static void downloadUsingStream(File file, String urlString) {
+    URL url = new URL(urlString)
+    BufferedInputStream bis = new BufferedInputStream(url.openStream())
+    FileOutputStream fis = new FileOutputStream(file)
+    byte[] buffer = new byte[1024]
+    int count = 0;
+    while ((count = bis.read(buffer, 0, 1024)) != -1) {
+        fis.write(buffer, 0, count)
+    }
+    fis.close()
+    bis.close()
+}
+
+Task copy = tasks.create(name: "copy",type: Copy, group: "Mechanical Kinetic Energy") {
+    from 'build/libs'
+    into 'build/run/plugins'
+}
+
+Task download = tasks.create(name: "downloadServerCore", group: "Mechanical Kinetic Energy") {
     final File name = file("build/run")
     if (!name.exists()) name.mkdirs()
     final def urlPreName = "https://download.getbukkit.org/spigot/"//spigot-1.19.3.jar
@@ -73,12 +92,14 @@ task downloadServerCore(group: "Mechanical Kinetic Energy") {
     }
     createRunBat(bat, jarName, java_path)
     createRunSh(sh, jarName, java_path)
-
 }
+//task copy(type: Copy ,group: "Mechanical Kinetic Energy") {
+//    from 'build/libs'
+//    into 'build/run/plugins'
+//}
 
-task runServer(type: Exec, group: "Mechanical Kinetic Energy") {
+Task run = tasks.create(name:"runServer",type: Exec, group: "Mechanical Kinetic Energy") {
     workingDir "$projectDir/build/run"
-
     File name = new File(getWorkingDir(), "eula.txt")
     if (!name.exists()) {
         name.createNewFile()
@@ -103,18 +124,9 @@ task runServer(type: Exec, group: "Mechanical Kinetic Energy") {
     }
 }
 
-static void downloadUsingStream(File file, String urlString) {
-    URL url = new URL(urlString)
-    BufferedInputStream bis = new BufferedInputStream(url.openStream())
-    FileOutputStream fis = new FileOutputStream(file)
-    byte[] buffer = new byte[1024]
-    int count = 0;
-    while ((count = bis.read(buffer, 0, 1024)) != -1) {
-        fis.write(buffer, 0, count)
-    }
-    fis.close()
-    bis.close()
-}
+Task build = tasks.build
+build.dependsOn(download)
+build.dependsOn(copy)
 
 static String getMonth(int i) {
     switch (i) {
