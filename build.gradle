@@ -59,7 +59,7 @@ processResources {
     }
 }
 
-task downloadServerCore {
+task downloadServerCore(group: "Mechanical Kinetic Energy") {
     final File name = file("build/run")
     if (!name.exists()) name.mkdirs()
     final def urlPreName = "https://download.getbukkit.org/spigot/"//spigot-1.19.3.jar
@@ -76,7 +76,7 @@ task downloadServerCore {
 
 }
 
-task runServer(type: Exec) {
+task runServer(type: Exec, group: "Mechanical Kinetic Energy") {
     workingDir "$projectDir/build/run"
 
     File name = new File(getWorkingDir(), "eula.txt")
