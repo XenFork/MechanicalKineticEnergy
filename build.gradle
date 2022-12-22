@@ -114,15 +114,15 @@ Task run = tasks.create(name:"runServer",type: Exec, group: "Mechanical Kinetic 
         bw.newLine()
         bw.close()
     }
-
-
-
     if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
         commandLine 'cmd', '/c', "${SHELL_NAME}.bat"
     } else {
         commandLine 'sh', '-c', "${SHELL_NAME}.sh"
     }
 }
+run.dependsOn(build)
+run.dependsOn(download)
+run.dependsOn(copy)
 
 Task build = tasks.build
 build.dependsOn(download)
