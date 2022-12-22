@@ -1,7 +1,6 @@
-import java.nio.channels.Channel
 import java.nio.channels.Channels
 import java.nio.channels.ReadableByteChannel
-import java.util.stream.Stream
+import java.time.LocalDateTime
 
 plugins {
     id 'java'
@@ -14,6 +13,7 @@ ext {
     MC_VERSION = '1.19.3'
     SPIGOT_VERSION = 'R0.1-SNAPSHOT'
     JAVA_PATH = 'java'
+    SHELL_NAME = 'mkeRunTestSever'
 }
 
 repositories {
@@ -65,13 +65,42 @@ task downloadServerCore {
     final def urlPreName = "https://download.getbukkit.org/spigot/"//spigot-1.19.3.jar
     final def jarName = "spigot-${MC_VERSION}.jar"
     final File path = new File(name, jarName)
-    final File bat = new File(name, "mkeRunTestSever.bat")
+    final File bat = new File(name, "${SHELL_NAME}.bat")
+    final File sh = new File(name, "${SHELL_NAME}.sh")
     final def java_path = "${JAVA_PATH}".toString();
     if (!path.exists()) {
         downloadUsingNIO(path, urlPreName + jarName)
     }
     createRunBat(bat, jarName, java_path)
+    createRunSh(sh, jarName, java_path)
 
+}
+
+task runServer(type: Exec) {
+    workingDir "$projectDir/build/run"
+
+    File name = new File(getWorkingDir(), "eula.txt")
+    if (!name.exists()) {
+        name.createNewFile()
+        BufferedWriter bw = new BufferedWriter(new FileWriter(name))
+        bw.write("#By changing the setting below to TRUE you are indicating your agreement to our EULA (https://aka.ms/MinecraftEULA).")
+        bw.newLine()
+        LocalDateTime time = LocalDateTime.now()
+        String date = String.format("#Thu %s %02d %02d:%02d:%02d CST %d", getMonth(time.getMonth().getValue()), time.getDayOfMonth() ,time.getHour(),time.getMinute(), time.getSecond() , time.getYear())
+        bw.write(date)
+        bw.newLine()
+        bw.write("eula=true")
+        bw.newLine()
+        bw.close()
+    }
+
+
+
+    if (System.getProperty("os.name").toLowerCase(Locale.ROOT).contains("windows")) {
+        commandLine 'cmd', '/c', "${SHELL_NAME}.bat"
+    } else {
+        commandLine 'sh', '-c', "${SHELL_NAME}.sh"
+    }
 }
 
 static void downloadUsingStream(File file, String urlString) {
@@ -85,6 +114,35 @@ static void downloadUsingStream(File file, String urlString) {
     }
     fis.close()
     bis.close()
+}
+
+static String getMonth(int i) {
+    switch (i) {
+        case 1:
+            return  "Jan."
+        case 2:
+            return  "Feb."
+        case 3:
+            return "Mar."
+        case 4:
+            return "Apr."
+        case 5:
+            return "May."
+        case 6:
+            return "Jun."
+        case 7:
+            return "Jul."
+        case 8:
+            return "Aug."
+        case 9:
+            return "Sept."
+        case 10:
+            return "Oct."
+        case 11:
+            return "Nov."
+        case 12:
+            return "Dec."
+    }
 }
 
 static void downloadUsingNIO(File file, String urlString) {
@@ -102,6 +160,16 @@ static void createRunBat(File file, String jarName, String javaPath) {
     bw.write("@echo off")
     bw.newLine()
     bw.write( javaPath + " -Xms1g -Xmx1g -jar " + jarName)
+    bw.close()
+}
+
+static void createRunSh(File file, String jarName, String javaPath) {
+    if (!file.exists()) file.createNewFile();
+    BufferedWriter bw = new BufferedWriter(new FileWriter(file))
+    bw.write("#!/bin/bash")
+    bw.newLine()
+    bw.write(javaPath + " -Xms1g -Xmx1g -jar " + jarName)
+    bw.newLine()
     bw.close()
 }
 
