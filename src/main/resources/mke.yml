@@ -1,0 +1,14 @@
+name: Mechanical Kinetic Energy #item name
+Shaped:
+  andesite_alloy:
+    item:
+      name: iron_ingot
+      count: 1
+      nbt:
+        name: andesite_alloy
+    shape:
+      - xy
+      - yx
+    ingredient:
+      x: iron_nugget
+      y: andesite
