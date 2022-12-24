@@ -1,14 +1,29 @@
 name: Mechanical Kinetic Energy #item name
-Shaped:
+#自定义物品
+item:
   andesite_alloy:
-    item:
-      name: iron_ingot
-      count: 1
-      nbt:
+    name: iron_ingot
+    count: 1
+    nbt:
+      string:
         name: andesite_alloy
+      int:
+      float:
+      double:
+      long:
+#合成
+Shaped:
+  #配方名
+  andesite_alloy:
+    out:
+      mke: andesite_alloy
     shape:
       - xy
       - yx
     ingredient:
-      x: iron_nugget
-      y: andesite
+      #此插件只检测，mke的和原版的nbt
+      minecraft:
+        x: iron_nugget
+        y: andesite
+    #镜像,用于将ingredient,x,y调换位置
+    mirror: true

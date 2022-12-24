@@ -4,14 +4,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.RecipeChoice;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
@@ -21,17 +20,26 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.logging.Logger;
-import java.util.logging.StreamHandler;
 
 public final class MechanicalKineticEnergy extends JavaPlugin {
     private final Logger log = getLogger();
     private File mkeConfigFile;
     private FileConfiguration mkeConfig;
     private NamespacedKeys spaces;
+    private final Map<String, Rec> stringMapMap = new HashMap<>();
 
     public FileConfiguration getMkeConfig() {
         return mkeConfig;
+    }
+
+    public static final Map<String, Material> items = new HashMap<>();
+
+    public static void loadItems() {
+        for (Material value : Material.values()) {
+            items.put(value.getKey().getKey().toLowerCase(), value);
+        }
     }
 
     @Override
@@ -40,6 +48,7 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
         // Plugin startup logic
         log.info("load plugin...");
         createMkeConfig();
+        loadItems();
         getYml();
         ItemStack stack = new ItemStack(Material.IRON_INGOT, 2);
         ItemMeta itemMeta = stack.getItemMeta();
@@ -66,11 +75,17 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
         andesite_alloy.setIngredient('x', Material.IRON_NUGGET);
         andesite_alloy.setIngredient('y', Material.ANDESITE);
         Bukkit.addRecipe(andesite_alloy);
+//        ShapedRecipe test = new ShapedRecipe(new NamespacedKey(this, "test"), stack);
+//        test.shape("xxx");
+//        RecipeChoice.ExactChoice choice = new RecipeChoice.MaterialChoice.ExactChoice(stack);
+//        test.setIngredient('x', choice);
+//        Bukkit.addRecipe(test);
     }
 
     @Override
     public void onDisable() {
         // Plugin shutdown logic
+        Bukkit.resetRecipes();
         log.warning("disable plugin");
     }
 
@@ -86,70 +101,8 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
         List<String> shape = new ArrayList<>();
         for (String key : getMkeConfig().getKeys(true)) {
 //            getMkeConfig().getValues(true).get(key);
-            if (key.contains("Shaped")) {
-                var split = key.split("\\.");
-                switch (mode) {
-                    case 0 -> {
-                        //初始化
-                        if (split.length == 2) {
-                            spaceName = split[split.length - 1];
-                            mode = 2;
-                        }
-                    }
-                    case 1 -> {
-                        if (itemName != null && spaceName != null && count != 0) {
-                            ItemStack stack = new ItemStack(Objects.requireNonNull(Material.getMaterial(itemName)), count);
-                            ItemMeta meta = stack.getItemMeta();
-                            Objects.requireNonNull(meta).setDisplayName(itemName);
-                            PersistentDataContainer persistentDataContainer = meta.getPersistentDataContainer();
-                            if (!nbt.isEmpty()) {
-                                for (var a : nbt.keySet()) {
-                                    var s = new NamespacedKey(this, a);
-                                    if (persistentDataContainer.has(s, PersistentDataType.STRING)) {
-                                        persistentDataContainer.remove(s);
-                                    }
-                                    persistentDataContainer.set(s, PersistentDataType.STRING, nbt.get(a));
-                                }
-                            }
-                            ShapedRecipe recipe = new ShapedRecipe(new NamespacedKey(this, spaceName), stack);
-                            if (!shape.isEmpty()) {
-                                recipe.shape(shape.toArray(new String[0]));
-                                if (!ingredient.isEmpty()) {
-                                    for (var ing : ingredient.keySet()) {
-                                        Material material = Material.getMaterial(ingredient.get(ing));
-                                        if (material)
-                                        recipe.setIngredient(ing.charAt(0), )
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    case 2 -> {
-                        if (split[split.length - 1].equals("shape")) mode = 3;
-                        else if (key.contains("nbt"))
-                            if (split[split.length - 2].equals("nbt"))
-                                nbt.put(split[split.length - 1], getMkeConfig().getString(key));
-                            else if (key.contains("name"))
-                                itemName = getMkeConfig().getString(key);
-                            else count = getMkeConfig().getInt(key);
-                    }
-                    case 3 -> {
-                        if (split.length == 2) {
-                            mode = 1;
-                            continue;
-                        }
-                        if (key.contains("ingredient")) {
-                            if (split[split.length - 2].equals("ingredient")) {
-                                ingredient.put(split[split.length - 1], getMkeConfig().getString(key));
-                            }
-                        } else if (split[split.length - 1].equals("shape")) {
-                            shape.addAll(getMkeConfig().getStringList(key));
-                        }
-
-                    }
-                }
-            }
-
+            var split = key.split("\\.");
+            System.out.println(key);
         }
     }
 
@@ -165,6 +118,27 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
+
+    }
+
+    public static class Nbt {
+        public String nbt;
+        public final Map<String, String> stringNbt = new HashMap<>();
+        public final Map<String, Integer> intNbt = new HashMap<>();
+        public final Map<String, Float> floatNbt = new HashMap<>();
+        public final Map<String, Double> doubleNbt = new HashMap<>();
+        public final Map<String, Long> longNbt = new HashMap<>();
+        public final Map<String, Byte> byteNbt = new HashMap<>();
+        public final Map<String, Short> shortNbt = new HashMap<>();
+    }
+
+    public static class Rec {
+        public String pre, sub, obj;
+        public List<String> listObj;
+        public Map<String, String> mapObj;
+        public final Map<String, Rec> rec = new HashMap<>();
+        public String key;
+
 
     }
 
