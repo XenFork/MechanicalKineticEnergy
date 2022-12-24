@@ -2,7 +2,8 @@ name: Mechanical Kinetic Energy #item name
 #自定义物品
 item:
   andesite_alloy:
-    name: iron_ingot
+    name:
+      minecraft: iron_ingot
     count: 1
     nbt:
       string:

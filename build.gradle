@@ -2,6 +2,7 @@ import java.time.LocalDateTime
 
 plugins {
     id 'java'
+    id 'antlr'
 }
 
 apply from: './MKEGradle/down.gradle'
@@ -33,6 +34,7 @@ repositories {
 dependencies {
     //noinspection VulnerableLibrariesLocal
     implementation("org.jetbrains:annotations:23.1.0")
+    antlr('org.antlr:antlr4:4.11.1')
     compileOnly "org.spigotmc:spigot-api:${MC_VERSION}-${SPIGOT_VERSION}"
     compileOnly "org.spigotmc:spigot:${MC_VERSION}-${SPIGOT_VERSION}"
 }

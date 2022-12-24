@@ -17,7 +17,7 @@ import java.util.Objects;
 import static org.overrun.mechanicalkineticenergy.MechanicalKineticEnergy.items;
 
 public class RegisterItem {
-    private Plugin mke;
+    private final Plugin mke;
     public static final Map<String, ItemStack> nameStack = new HashMap<>();
     public RegisterItem(Plugin mke) {
         this.mke = mke;

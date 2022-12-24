@@ -16,6 +16,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
+import org.overrun.mechanicalkineticenergy.recipes.ShapedRegister;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +71,8 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
             itemMeta.setLore(lore);
         }
         stack.setItemMeta(itemMeta);
-        ShapedRecipe andesite_alloy = new ShapedRecipe(spaces.get("andesite_alloy_key"), stack);
+        ShapedRegister andesite_alloy = new ShapedRegister(spaces.get("andesite_alloy_key"), stack);
+//                new ShapedRecipe(spaces.get("andesite_alloy_key"), stack);
         andesite_alloy.shape("xy", "yx");
         andesite_alloy.setIngredient('x', Material.IRON_NUGGET);
         andesite_alloy.setIngredient('y', Material.ANDESITE);
@@ -103,6 +105,13 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
 //            getMkeConfig().getValues(true).get(key);
             var split = key.split("\\.");
             System.out.println(key);
+            if (split[0].equals("item")) {
+                switch (split.length) {
+                    case 3 -> {
+
+                    }
+                }
+            }
         }
     }
 
