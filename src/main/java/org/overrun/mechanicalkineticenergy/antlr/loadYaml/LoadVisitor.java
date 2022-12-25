@@ -7,9 +7,13 @@ import org.antlr.v4.runtime.CommonTokenStream;
 public class LoadVisitor {
     public static void main(String[] args) {
         String str = """
-                a_A:\s
-                  你好:
-                    c: a
+                a:
+                  a_a:
+                    a_a_a: 1
+                b:
+                  b_b:
+                    b_b: 1
+                    c: 1
                 """;
         CharStream stream = CharStreams.fromString(str);
         YamlLexer lexer = new YamlLexer(stream);

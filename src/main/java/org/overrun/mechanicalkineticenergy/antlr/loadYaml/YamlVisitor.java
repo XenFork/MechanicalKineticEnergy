@@ -28,6 +28,12 @@ public interface YamlVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCode(YamlParser.CodeContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link YamlParser#codeT}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCodeT(YamlParser.CodeTContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link YamlParser#tabCode}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

@@ -18,10 +18,10 @@ public class YamlParser extends Parser {
 	public static final int
 		T__0=1, T__1=2, ID=3, LINE_COMMENT=4, WS=5, TAB=6;
 	public static final int
-		RULE_yaml = 0, RULE_y = 1, RULE_code = 2, RULE_tabCode = 3;
+		RULE_yaml = 0, RULE_y = 1, RULE_code = 2, RULE_codeT = 3, RULE_tabCode = 4;
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"yaml", "y", "code", "tabCode"
+			"yaml", "y", "code", "codeT", "tabCode"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -122,20 +122,20 @@ public class YamlParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(9); 
+			setState(11); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(8);
+				setState(10);
 				y();
 				}
 				}
-				setState(11); 
+				setState(13); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( _la==ID );
+			} while ( _la==ID || _la==TAB );
 			}
 		}
 		catch (RecognitionException re) {
@@ -151,6 +151,9 @@ public class YamlParser extends Parser {
 
 	@SuppressWarnings("CheckReturnValue")
 	public static class YContext extends ParserRuleContext {
+		public CodeTContext codeT() {
+			return getRuleContext(CodeTContext.class,0);
+		}
 		public CodeContext code() {
 			return getRuleContext(CodeContext.class,0);
 		}
@@ -180,20 +183,27 @@ public class YamlParser extends Parser {
 		YContext _localctx = new YContext(_ctx, getState());
 		enterRule(_localctx, 2, RULE_y);
 		try {
-			setState(15);
+			setState(18);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,1,_ctx) ) {
 			case 1:
 				enterOuterAlt(_localctx, 1);
 				{
-				setState(13);
-				code();
+				setState(15);
+				codeT();
 				}
 				break;
 			case 2:
 				enterOuterAlt(_localctx, 2);
 				{
-				setState(14);
+				setState(16);
+				code();
+				}
+				break;
+			case 3:
+				enterOuterAlt(_localctx, 3);
+				{
+				setState(17);
 				tabCode();
 				}
 				break;
@@ -243,12 +253,65 @@ public class YamlParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(17);
+			setState(20);
 			((CodeContext)_localctx).pre = match(ID);
-			setState(18);
+			setState(21);
 			match(T__0);
-			setState(19);
+			setState(22);
 			((CodeContext)_localctx).sub = match(ID);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	@SuppressWarnings("CheckReturnValue")
+	public static class CodeTContext extends ParserRuleContext {
+		public Token tabs;
+		public CodeContext code() {
+			return getRuleContext(CodeContext.class,0);
+		}
+		public TerminalNode TAB() { return getToken(YamlParser.TAB, 0); }
+		public CodeTContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_codeT; }
+		@Override
+		public void enterRule(ParseTreeListener listener) {
+			if ( listener instanceof YamlListener) ((YamlListener)listener).enterCodeT(this);
+		}
+		@Override
+		public void exitRule(ParseTreeListener listener) {
+			if ( listener instanceof YamlListener) ((YamlListener)listener).exitCodeT(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof YamlVisitor) return ((YamlVisitor<? extends T>)visitor).visitCodeT(this);
+			else return visitor.visitChildren(this);
+		}
+	}
+
+	public final CodeTContext codeT() throws RecognitionException {
+		CodeTContext _localctx = new CodeTContext(_ctx, getState());
+		enterRule(_localctx, 6, RULE_codeT);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(24);
+			((CodeTContext)_localctx).tabs = match(TAB);
+
+			    var a = YamlLexer.getspaceCount(((CodeTContext)_localctx).tabs.getText()) / 2;
+			    System.out.println(a);
+
+			setState(26);
+			code();
 			}
 		}
 		catch (RecognitionException re) {
@@ -270,6 +333,9 @@ public class YamlParser extends Parser {
 		public TerminalNode TAB() { return getToken(YamlParser.TAB, 0); }
 		public CodeContext code() {
 			return getRuleContext(CodeContext.class,0);
+		}
+		public CodeTContext codeT() {
+			return getRuleContext(CodeTContext.class,0);
 		}
 		public TabCodeContext tabCode() {
 			return getRuleContext(TabCodeContext.class,0);
@@ -295,14 +361,14 @@ public class YamlParser extends Parser {
 
 	public final TabCodeContext tabCode() throws RecognitionException {
 		TabCodeContext _localctx = new TabCodeContext(_ctx, getState());
-		enterRule(_localctx, 6, RULE_tabCode);
+		enterRule(_localctx, 8, RULE_tabCode);
 		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(21);
+			setState(28);
 			((TabCodeContext)_localctx).pre = match(ID);
-			setState(22);
+			setState(29);
 			_la = _input.LA(1);
 			if ( !(_la==T__0 || _la==T__1) ) {
 			_errHandler.recoverInline(this);
@@ -312,24 +378,30 @@ public class YamlParser extends Parser {
 				_errHandler.reportMatch(this);
 				consume();
 			}
-			setState(23);
+			setState(30);
 			((TabCodeContext)_localctx).tabs = match(TAB);
 
-			    var a = YamlLexer.getspaceCount(((TabCodeContext)_localctx).tabs.getText());
+			    var a = YamlLexer.getspaceCount(((TabCodeContext)_localctx).tabs.getText()) / 2;
 			    System.out.println(a);
 
-			setState(27);
+			setState(35);
 			_errHandler.sync(this);
 			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
 			case 1:
 				{
-				setState(25);
+				setState(32);
 				code();
 				}
 				break;
 			case 2:
 				{
-				setState(26);
+				setState(33);
+				codeT();
+				}
+				break;
+			case 3:
+				{
+				setState(34);
 				tabCode();
 				}
 				break;
@@ -348,27 +420,32 @@ public class YamlParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0006\u001e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
-		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0001\u0000\u0004\u0000"+
-		"\n\b\u0000\u000b\u0000\f\u0000\u000b\u0001\u0001\u0001\u0001\u0003\u0001"+
-		"\u0010\b\u0001\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0003"+
-		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0003\u0003"+
-		"\u001c\b\u0003\u0001\u0003\u0000\u0000\u0004\u0000\u0002\u0004\u0006\u0000"+
-		"\u0001\u0001\u0000\u0001\u0002\u001c\u0000\t\u0001\u0000\u0000\u0000\u0002"+
-		"\u000f\u0001\u0000\u0000\u0000\u0004\u0011\u0001\u0000\u0000\u0000\u0006"+
-		"\u0015\u0001\u0000\u0000\u0000\b\n\u0003\u0002\u0001\u0000\t\b\u0001\u0000"+
-		"\u0000\u0000\n\u000b\u0001\u0000\u0000\u0000\u000b\t\u0001\u0000\u0000"+
-		"\u0000\u000b\f\u0001\u0000\u0000\u0000\f\u0001\u0001\u0000\u0000\u0000"+
-		"\r\u0010\u0003\u0004\u0002\u0000\u000e\u0010\u0003\u0006\u0003\u0000\u000f"+
-		"\r\u0001\u0000\u0000\u0000\u000f\u000e\u0001\u0000\u0000\u0000\u0010\u0003"+
-		"\u0001\u0000\u0000\u0000\u0011\u0012\u0005\u0003\u0000\u0000\u0012\u0013"+
-		"\u0005\u0001\u0000\u0000\u0013\u0014\u0005\u0003\u0000\u0000\u0014\u0005"+
-		"\u0001\u0000\u0000\u0000\u0015\u0016\u0005\u0003\u0000\u0000\u0016\u0017"+
-		"\u0007\u0000\u0000\u0000\u0017\u0018\u0005\u0006\u0000\u0000\u0018\u001b"+
-		"\u0006\u0003\uffff\uffff\u0000\u0019\u001c\u0003\u0004\u0002\u0000\u001a"+
-		"\u001c\u0003\u0006\u0003\u0000\u001b\u0019\u0001\u0000\u0000\u0000\u001b"+
-		"\u001a\u0001\u0000\u0000\u0000\u001c\u0007\u0001\u0000\u0000\u0000\u0003"+
-		"\u000b\u000f\u001b";
+		"\u0004\u0001\u0006&\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0001"+
+		"\u0000\u0004\u0000\f\b\u0000\u000b\u0000\f\u0000\r\u0001\u0001\u0001\u0001"+
+		"\u0001\u0001\u0003\u0001\u0013\b\u0001\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0001\u0002\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0004"+
+		"\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004\u0001\u0004"+
+		"\u0003\u0004$\b\u0004\u0001\u0004\u0000\u0000\u0005\u0000\u0002\u0004"+
+		"\u0006\b\u0000\u0001\u0001\u0000\u0001\u0002%\u0000\u000b\u0001\u0000"+
+		"\u0000\u0000\u0002\u0012\u0001\u0000\u0000\u0000\u0004\u0014\u0001\u0000"+
+		"\u0000\u0000\u0006\u0018\u0001\u0000\u0000\u0000\b\u001c\u0001\u0000\u0000"+
+		"\u0000\n\f\u0003\u0002\u0001\u0000\u000b\n\u0001\u0000\u0000\u0000\f\r"+
+		"\u0001\u0000\u0000\u0000\r\u000b\u0001\u0000\u0000\u0000\r\u000e\u0001"+
+		"\u0000\u0000\u0000\u000e\u0001\u0001\u0000\u0000\u0000\u000f\u0013\u0003"+
+		"\u0006\u0003\u0000\u0010\u0013\u0003\u0004\u0002\u0000\u0011\u0013\u0003"+
+		"\b\u0004\u0000\u0012\u000f\u0001\u0000\u0000\u0000\u0012\u0010\u0001\u0000"+
+		"\u0000\u0000\u0012\u0011\u0001\u0000\u0000\u0000\u0013\u0003\u0001\u0000"+
+		"\u0000\u0000\u0014\u0015\u0005\u0003\u0000\u0000\u0015\u0016\u0005\u0001"+
+		"\u0000\u0000\u0016\u0017\u0005\u0003\u0000\u0000\u0017\u0005\u0001\u0000"+
+		"\u0000\u0000\u0018\u0019\u0005\u0006\u0000\u0000\u0019\u001a\u0006\u0003"+
+		"\uffff\uffff\u0000\u001a\u001b\u0003\u0004\u0002\u0000\u001b\u0007\u0001"+
+		"\u0000\u0000\u0000\u001c\u001d\u0005\u0003\u0000\u0000\u001d\u001e\u0007"+
+		"\u0000\u0000\u0000\u001e\u001f\u0005\u0006\u0000\u0000\u001f#\u0006\u0004"+
+		"\uffff\uffff\u0000 $\u0003\u0004\u0002\u0000!$\u0003\u0006\u0003\u0000"+
+		"\"$\u0003\b\u0004\u0000# \u0001\u0000\u0000\u0000#!\u0001\u0000\u0000"+
+		"\u0000#\"\u0001\u0000\u0000\u0000$\t\u0001\u0000\u0000\u0000\u0003\r\u0012"+
+		"#";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
