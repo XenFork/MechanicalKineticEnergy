@@ -266,11 +266,14 @@ public class YamlParser extends Parser {
 	public static class TabCodeContext extends ParserRuleContext {
 		public Token pre;
 		public Token tabs;
+		public TerminalNode ID() { return getToken(YamlParser.ID, 0); }
+		public TerminalNode TAB() { return getToken(YamlParser.TAB, 0); }
 		public CodeContext code() {
 			return getRuleContext(CodeContext.class,0);
 		}
-		public TerminalNode ID() { return getToken(YamlParser.ID, 0); }
-		public TerminalNode TAB() { return getToken(YamlParser.TAB, 0); }
+		public TabCodeContext tabCode() {
+			return getRuleContext(TabCodeContext.class,0);
+		}
 		public TabCodeContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -315,8 +318,22 @@ public class YamlParser extends Parser {
 			    var a = YamlLexer.getspaceCount(((TabCodeContext)_localctx).tabs.getText());
 			    System.out.println(a);
 
-			setState(25);
-			code();
+			setState(27);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,2,_ctx) ) {
+			case 1:
+				{
+				setState(25);
+				code();
+				}
+				break;
+			case 2:
+				{
+				setState(26);
+				tabCode();
+				}
+				break;
+			}
 			}
 		}
 		catch (RecognitionException re) {
@@ -331,25 +348,27 @@ public class YamlParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0006\u001c\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
+		"\u0004\u0001\u0006\u001e\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001"+
 		"\u0002\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0001\u0000\u0004\u0000"+
 		"\n\b\u0000\u000b\u0000\f\u0000\u000b\u0001\u0001\u0001\u0001\u0003\u0001"+
 		"\u0010\b\u0001\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0003"+
-		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003"+
-		"\u0000\u0000\u0004\u0000\u0002\u0004\u0006\u0000\u0001\u0001\u0000\u0001"+
-		"\u0002\u0019\u0000\t\u0001\u0000\u0000\u0000\u0002\u000f\u0001\u0000\u0000"+
-		"\u0000\u0004\u0011\u0001\u0000\u0000\u0000\u0006\u0015\u0001\u0000\u0000"+
-		"\u0000\b\n\u0003\u0002\u0001\u0000\t\b\u0001\u0000\u0000\u0000\n\u000b"+
-		"\u0001\u0000\u0000\u0000\u000b\t\u0001\u0000\u0000\u0000\u000b\f\u0001"+
-		"\u0000\u0000\u0000\f\u0001\u0001\u0000\u0000\u0000\r\u0010\u0003\u0004"+
-		"\u0002\u0000\u000e\u0010\u0003\u0006\u0003\u0000\u000f\r\u0001\u0000\u0000"+
-		"\u0000\u000f\u000e\u0001\u0000\u0000\u0000\u0010\u0003\u0001\u0000\u0000"+
-		"\u0000\u0011\u0012\u0005\u0003\u0000\u0000\u0012\u0013\u0005\u0001\u0000"+
-		"\u0000\u0013\u0014\u0005\u0003\u0000\u0000\u0014\u0005\u0001\u0000\u0000"+
-		"\u0000\u0015\u0016\u0005\u0003\u0000\u0000\u0016\u0017\u0007\u0000\u0000"+
-		"\u0000\u0017\u0018\u0005\u0006\u0000\u0000\u0018\u0019\u0006\u0003\uffff"+
-		"\uffff\u0000\u0019\u001a\u0003\u0004\u0002\u0000\u001a\u0007\u0001\u0000"+
-		"\u0000\u0000\u0002\u000b\u000f";
+		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0003\u0003\u0003"+
+		"\u001c\b\u0003\u0001\u0003\u0000\u0000\u0004\u0000\u0002\u0004\u0006\u0000"+
+		"\u0001\u0001\u0000\u0001\u0002\u001c\u0000\t\u0001\u0000\u0000\u0000\u0002"+
+		"\u000f\u0001\u0000\u0000\u0000\u0004\u0011\u0001\u0000\u0000\u0000\u0006"+
+		"\u0015\u0001\u0000\u0000\u0000\b\n\u0003\u0002\u0001\u0000\t\b\u0001\u0000"+
+		"\u0000\u0000\n\u000b\u0001\u0000\u0000\u0000\u000b\t\u0001\u0000\u0000"+
+		"\u0000\u000b\f\u0001\u0000\u0000\u0000\f\u0001\u0001\u0000\u0000\u0000"+
+		"\r\u0010\u0003\u0004\u0002\u0000\u000e\u0010\u0003\u0006\u0003\u0000\u000f"+
+		"\r\u0001\u0000\u0000\u0000\u000f\u000e\u0001\u0000\u0000\u0000\u0010\u0003"+
+		"\u0001\u0000\u0000\u0000\u0011\u0012\u0005\u0003\u0000\u0000\u0012\u0013"+
+		"\u0005\u0001\u0000\u0000\u0013\u0014\u0005\u0003\u0000\u0000\u0014\u0005"+
+		"\u0001\u0000\u0000\u0000\u0015\u0016\u0005\u0003\u0000\u0000\u0016\u0017"+
+		"\u0007\u0000\u0000\u0000\u0017\u0018\u0005\u0006\u0000\u0000\u0018\u001b"+
+		"\u0006\u0003\uffff\uffff\u0000\u0019\u001c\u0003\u0004\u0002\u0000\u001a"+
+		"\u001c\u0003\u0006\u0003\u0000\u001b\u0019\u0001\u0000\u0000\u0000\u001b"+
+		"\u001a\u0001\u0000\u0000\u0000\u001c\u0007\u0001\u0000\u0000\u0000\u0003"+
+		"\u000b\u000f\u001b";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

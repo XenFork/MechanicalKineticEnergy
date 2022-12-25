@@ -8,7 +8,8 @@ public class LoadVisitor {
     public static void main(String[] args) {
         String str = """
                 a_A:\s
-                  b_b: a
+                  你好:
+                    c: a
                 """;
         CharStream stream = CharStreams.fromString(str);
         YamlLexer lexer = new YamlLexer(stream);

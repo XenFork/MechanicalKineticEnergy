@@ -37,8 +37,8 @@ code: pre=ID': ' sub=ID;
 tabCode: pre=ID (':' | ': ') tabs=TAB {
     var a = YamlLexer.getspaceCount($tabs.getText());
     System.out.println(a);
-}  code;
-ID:[a-zA-Z0-9_]+;
+}  (code | tabCode);
+ID:[\u4e00-\u9fa5a-zA-Z0-9_]+;
 LINE_COMMENT : '#' .*? '\n' -> skip;
 WS: '\n' -> skip;
 TAB: ' '+;
