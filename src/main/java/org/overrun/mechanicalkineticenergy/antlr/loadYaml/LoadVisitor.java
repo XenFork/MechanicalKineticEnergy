@@ -14,6 +14,10 @@ public class LoadVisitor {
                   b_b:
                     b_b: 1
                     c: 1
+                    d:
+                      - a
+                      - b
+                      - c
                 """;
         CharStream stream = CharStreams.fromString(str);
         YamlLexer lexer = new YamlLexer(stream);
@@ -24,5 +28,23 @@ public class LoadVisitor {
     }
 
     public static class YamlBaseVisitor_ extends YamlBaseVisitor<String> {
+        @Override
+        public String visitYaml(YamlParser.YamlContext ctx) {
+            for (var y : ctx.y()) {
+                visitY(y);
+            }
+            return "load " + ctx.y().size() + "y";
+        }
+
+        @Override
+        public String visitY(YamlParser.YContext ctx) {
+            if (ctx.code() != null) {
+                return visitCode(ctx.code());
+            } else if (ctx.codeT() != null) {
+                return visitCodeT(ctx.codeT());
+            } else {
+                return visitTabCode(ctx.tabCode());
+            }
+        }
     }
 }

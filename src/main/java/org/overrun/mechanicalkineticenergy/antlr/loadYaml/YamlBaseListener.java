@@ -52,6 +52,18 @@ public class YamlBaseListener implements YamlListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterListCode(YamlParser.ListCodeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitListCode(YamlParser.ListCodeContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterCodeT(YamlParser.CodeTContext ctx) { }
 	/**
 	 * {@inheritDoc}
