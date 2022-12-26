@@ -32,17 +32,9 @@ public static int getspaceCount(String a) {
 
 }
 yaml: y+;
-y: codeT | listCode | code | tabCode;
-code: pre=ID': ' sub=ID;
+y: (tabs=TAB | ) (listCode | code) ;
+code:  pre=ID (': ' (sub=ID | )| ':') ;
 listCode: '- ' list=ID;
-codeT: tabs=TAB {
-    var a = YamlLexer.getspaceCount($tabs.getText()) / 2;
-    System.out.println(a);
-} code;
-tabCode: pre=ID (':' | ': ') tabs=TAB {
-    var a = YamlLexer.getspaceCount($tabs.getText()) / 2;
-    System.out.println(a);
-}  (code | codeT | tabCode | listCode);
 ID:[\u4e00-\u9fa5a-zA-Z0-9_]+;
 LINE_COMMENT : '#' .*? '\n' -> skip;
 WS: '\n' -> skip;
