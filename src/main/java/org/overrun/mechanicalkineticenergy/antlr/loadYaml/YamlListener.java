@@ -46,24 +46,4 @@ public interface YamlListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitListCode(YamlParser.ListCodeContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link YamlParser#codeT}.
-	 * @param ctx the parse tree
-	 */
-	void enterCodeT(YamlParser.CodeTContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link YamlParser#codeT}.
-	 * @param ctx the parse tree
-	 */
-	void exitCodeT(YamlParser.CodeTContext ctx);
-	/**
-	 * Enter a parse tree produced by {@link YamlParser#tabCode}.
-	 * @param ctx the parse tree
-	 */
-	void enterTabCode(YamlParser.TabCodeContext ctx);
-	/**
-	 * Exit a parse tree produced by {@link YamlParser#tabCode}.
-	 * @param ctx the parse tree
-	 */
-	void exitTabCode(YamlParser.TabCodeContext ctx);
 }
