@@ -32,10 +32,14 @@ public static int getspaceCount(String a) {
 
 }
 yaml: y+;
-y: (tabs=TAB | ) (listCode | code) ;
-code:  pre=ID (': ' (sub=ID | )| ':') ;
-listCode: '- ' list=ID;
+y: code;
+code: pre=ID (': ' sub=ID | ':' tabCode+) ;
+tabCode: tabs=TAB (code | listCode+) ;
+listCode: '- ' ID;
+//y: (tabs=TAB | ) (listCode | code) ;
+//code:  pre=ID (': ' (sub=ID | )| ':') ;
+//listCode: '- ' list=ID;
 ID:[\u4e00-\u9fa5a-zA-Z0-9_]+;
 LINE_COMMENT : '#' .*? '\n' -> skip;
-WS: '\n' -> skip;
+WS: [\n] -> skip;
 TAB: ' '+;

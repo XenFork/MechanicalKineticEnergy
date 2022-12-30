@@ -3,11 +3,17 @@ package org.overrun.mechanicalkineticenergy.antlr.loadYaml;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class LoadVisitor {
+    public static final List<Record1> record1s = new ArrayList<>();
+    public static final VisitorYaml instance = new VisitorYaml();
+    private static int i;
     public static void main(String[] args) {
         String str = """
                 a:
@@ -26,27 +32,26 @@ public class LoadVisitor {
         YamlLexer lexer = new YamlLexer(stream);
         CommonTokenStream tokenStream = new CommonTokenStream(lexer);
         YamlParser parser = new YamlParser(tokenStream);
-        YamlBaseVisitor_ yamlBaseVisitor = new YamlBaseVisitor_();
-        yamlBaseVisitor.visitYaml(parser.yaml());
-        yamlBaseVisitor.recordList.forEach(System.out::println);
+        Map<String, Object> stringObjectMap = instance.visitYaml(parser.yaml());
+        invoke(stringObjectMap);
+//        instance.recordList.forEach(System.out::println);
     }
-    public static class YamlBaseVisitor_ extends YamlBaseVisitor<String> {
-        public final List<Record> recordList = new ArrayList<>();
-        @Override
-        public String visitYaml(YamlParser.YamlContext ctx) {
-            for (var y : ctx.y()) {
-                visitY(y);
+
+    public static void invoke(Map<String, Object> stringObjectMap) {
+        stringObjectMap.forEach((s, o) -> {
+            System.out.println(s + ":" + o);
+            if (o instanceof Map<?,?> map) {
+                Map<String, Object> objectMap = new HashMap<>();
+                map.forEach((o1, o2) -> {
+                    if (o1 instanceof String str) objectMap.put(str, o2);
+                });
+                invoke(objectMap);
+            } else if (o instanceof List<?> list) {
+                list.forEach(list1 -> System.out.println(s + ":" + list1));
+            } else {
+                System.out.println(s + ":" + o);
             }
-            return "load " + ctx.y().size() + "y";
-        }
-
-        @Override
-        public String visitY(YamlParser.YContext ctx) {
-
-            int i = ctx.tabs != null ? YamlLexer.getspaceCount(ctx.tabs.getText()) / 2 : 0;
-            recordList.add(ctx.code() != null ? new Record("code", i, ctx.code().pre.getText(), ctx.code().sub != null ? ctx.code().sub.getText() : null) :
-                    new Record("list", i, null, ctx.listCode() != null ? ctx.listCode().list.getText() : null));
-            return null;
-        }
+        });
     }
+
 }
