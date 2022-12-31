@@ -81,7 +81,7 @@ static void createRunBat(File file, String jarName, String javaPath) {
     BufferedWriter bw = new BufferedWriter(new FileWriter(file))
     bw.write("@echo off")
     bw.newLine()
-    bw.write( javaPath + " -Xms1g -Xmx1g -jar " + jarName + " nogui")
+    bw.write( javaPath + " -Xms1g -Xmx1g -jar " + jarName)
     bw.close()
 }
 

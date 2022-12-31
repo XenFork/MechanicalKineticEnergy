@@ -1,6 +1,6 @@
-name: Mechanical Kinetic Energy #item name
+Name: Mechanical Kinetic Energy #item name
 #自定义物品
-item:
+Item:
   andesite_alloy:
     name:
       minecraft: iron_ingot
@@ -9,7 +9,6 @@ item:
       string:
         name: andesite_alloy
       int:
-      float:
       double:
       long:
 #合成
