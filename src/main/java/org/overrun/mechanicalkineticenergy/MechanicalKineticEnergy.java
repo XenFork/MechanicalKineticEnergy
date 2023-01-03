@@ -27,10 +27,13 @@ import java.util.*;
 import java.util.function.Predicate;
 import java.util.logging.Logger;
 
+import static org.overrun.mechanicalkineticenergy.utils.YamlUtils.itemRecord;
+import static org.overrun.mechanicalkineticenergy.utils.YamlUtils.shapedRecord;
+
 public final class MechanicalKineticEnergy extends JavaPlugin {
     private final Logger log = getLogger();
     private File mkeConfigFile;
-    public static final List<YamlUtils.Record> itemRecord = new ArrayList<>();
+
     private FileConfiguration mkeConfig;
     private NamespacedKeys spaces;
 
@@ -99,13 +102,14 @@ public final class MechanicalKineticEnergy extends JavaPlugin {
             YamlUtils.invokeShaped(mkeConfig);
         }
         itemRecord.forEach(items -> log.info(items.toString()));
-        for (String key : getMkeConfig().getKeys(true)) {
-//            getMkeConfig().getValues(true).get(key);
-            var split = key.split("\\.");
-            if (!split[0].equals("Item")) {
-                System.out.println(key);
-            }
-        }
+        shapedRecord.forEach(recordShaped -> log.info(recordShaped.toString()));
+//        for (String key : getMkeConfig().getKeys(true)) {
+////            getMkeConfig().getValues(true).get(key);
+//            var split = key.split("\\.");
+//            if (!split[0].equals("Item")) {
+//                System.out.println(key);
+//            }
+//        }
     }
 
     private void createMkeConfig() {
