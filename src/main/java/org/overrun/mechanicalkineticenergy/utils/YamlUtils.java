@@ -4,13 +4,11 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.FileConfiguration;
 
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 
 public class YamlUtils {
 
-    public static final List<Record> itemRecord = new ArrayList<>();
+    public static final List<RecordItem> ITEM_RECORD_ITEM = new ArrayList<>();
     public static final List<RecordShaped> shapedRecord = new ArrayList<>();
 
     public static MemorySection getMemorySection(MemorySection memorySection, String key) {
@@ -63,16 +61,16 @@ public class YamlUtils {
     public static void invokeItem(FileConfiguration mkeConfig) {
         MemorySection m = getMemorySection(mkeConfig, "Item");
         if (m != null) for (String key : getMKeyList(m)) {
-            Record record = new Record();
-            record.name = key;
+            RecordItem recordItem = new RecordItem();
+            recordItem.name = key;
             MemorySection m1 = getMemorySection(m, key);
             if (m1 != null) for (String m1Key : getMKeyList(m1)) {
                 MemorySection m2 = getMemorySection(m1, m1Key);
                 switch (m1Key) {
                     case "name" -> {
                         if (m2 != null) for (String m2Key : m2.getKeys(true)) {
-                            record.namespaceKey = m2Key;
-                            record.materialName = m2.getString(m2Key);
+                            recordItem.namespaceKey = m2Key;
+                            recordItem.materialName = m2.getString(m2Key);
                         }
                     }
                     case "nbt" -> {
@@ -81,27 +79,27 @@ public class YamlUtils {
                             switch (m2Key) {
                                 case "string" -> {
                                     if (m3 != null) for (String m3Key : m3.getKeys(true))
-                                        record.nbt.put(m3Key, m3.getString(m3Key));
+                                        recordItem.nbt.put(m3Key, m3.getString(m3Key));
                                 }
                                 case "int" -> {
                                     if (m3 != null) for (String m3Key : m3.getKeys(true))
-                                        record.nbt.put(m3Key, m3.getInt(m3Key));
+                                        recordItem.nbt.put(m3Key, m3.getInt(m3Key));
                                 }
                                 case "double" -> {
                                     if (m3 != null) for (String m3Key : m3.getKeys(true))
-                                        record.nbt.put(m3Key, m3.getDouble(m3Key));
+                                        recordItem.nbt.put(m3Key, m3.getDouble(m3Key));
                                 }
                                 case "long" -> {
                                     if (m3 != null) for (String m3Key : m3.getKeys(true))
-                                        record.nbt.put(m3Key, m3.getLong(m3Key));
+                                        recordItem.nbt.put(m3Key, m3.getLong(m3Key));
                                 }
                             }
                         }
                     }
-                    case "count" -> record.count = m1.getInt(m1Key);
+                    case "count" -> recordItem.count = m1.getInt(m1Key);
                 }
             }
-            itemRecord.add(record);
+            ITEM_RECORD_ITEM.add(recordItem);
         }
 
     }
@@ -115,6 +113,34 @@ public class YamlUtils {
         private final Map<Character, RecordNameSpace> ingredientMap = new HashMap<>();
         public RecordShaped() {
 
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(recipeName, mirror, outNameSpaceKey, outSubName, shape, ingredientMap);
+        }
+
+        public String recipeName() {
+            return recipeName;
+        }
+
+        public boolean mirror() {
+            return mirror;
+        }
+
+        public String outNameSpaceKey() {
+            return outNameSpaceKey;
+        }
+
+        public String outSubName() {
+            return outSubName;
+        }
+        public Map<Character, RecordNameSpace> ingredientMap() {
+            return ingredientMap;
+        }
+
+        public List<String> shape() {
+            return shape;
         }
 
         @Override
@@ -137,14 +163,14 @@ public class YamlUtils {
         }
     }
 
-    public static final class Record {
+    public static final class RecordItem {
         private String name;
         private String namespaceKey;
         private String materialName;
         private int count;
         private final Map<String, Object> nbt = new HashMap<>();
 
-        public Record() {
+        public RecordItem() {
 
         }
 
@@ -183,7 +209,7 @@ public class YamlUtils {
         public boolean equals(Object obj) {
             if (obj == this) return true;
             if (obj == null || obj.getClass() != this.getClass()) return false;
-            var that = (Record) obj;
+            var that = (RecordItem) obj;
             return Objects.equals(this.name, that.name) &&
                     Objects.equals(this.namespaceKey, that.namespaceKey) &&
                     Objects.equals(this.materialName, that.materialName) &&
@@ -199,5 +225,12 @@ public class YamlUtils {
     public static final class RecordNameSpace {
         private String key;
         private String value;
+
+        public String key() {
+            return key;
+        }
+        public String value() {
+            return value;
+        }
     }
 }
